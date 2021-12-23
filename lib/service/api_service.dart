@@ -7,7 +7,8 @@ class Service {
       "http://deneme.kitabya.com/index.php/wp-json/wp/v2";
 
   Future<List<WordPressModel>> getNews() async {
-    Response res = await http.get(Uri.parse(_wrodpressUrl + "/posts"),headers: {"Accept":"application/json"});
+    Response res = await http.get(Uri.parse(_wrodpressUrl + "/posts"),
+        headers: {"Accept": "application/json", "Connection": "Keep-Alive"});
 
     //first of all let's check that we got a 200 statu code: this mean that the request was a succes
     if (res.statusCode == 200) {
