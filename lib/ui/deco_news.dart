@@ -16,8 +16,6 @@ class _DecoNewsScreenState extends State<DecoNewsScreen> {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
   Service client = Service();
 
-  bool isSelected = false;
-
   String formatHtmlString(String string) {
     return string
         .replaceAll("<p>", "")
@@ -76,6 +74,7 @@ class _DecoNewsScreenState extends State<DecoNewsScreen> {
       builder:
           (BuildContext context, AsyncSnapshot<List<WordPressModel>> snapshot) {
         //let's check if we got a response or not
+
         if (snapshot.hasData) {
           //Now let's make a list of articles
           List<WordPressModel>? news = snapshot.data;
@@ -94,66 +93,8 @@ class _DecoNewsScreenState extends State<DecoNewsScreen> {
                   transitionType: ContainerTransitionType.fade,
                   closedBuilder: (BuildContext _, VoidCallback openContainer) {
                     return Container(
-                      decoration: BoxDecoration(color: Colors.white,
-                          // borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 5,
-                              blurRadius: 7,
-                              offset: const Offset(5, 5),
-                            )
-                          ]),
-                      child: Column(
-                        // crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            height: 150,
-                            child: Image.network(
-                              news[index].betterFeaturedImage!.sourceUrl!,
-                              filterQuality: FilterQuality.low,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                            child: Text(
-                              formatHtmlString(
-                                  news[index].title!.rendered.toString()),
-                              style: TextStyle(
-                                  color: Colors.blueGrey.shade900,
-                                  fontSize: 15),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          SizedBox(
-                            child: Row(
-                              children: [
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                                const Icon(
-                                  Icons.watch_later,
-                                  color: Colors.blueGrey,
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Text(news[index].date!.day.toString() +
-                                    " " +
-                                    news[index].date!.month.toString() +
-                                    " " +
-                                    news[index].date!.year.toString()),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
+                      decoration: decoratedShadowBox(),
+                      child: newsColumn(news, index),
                     );
                   },
                   openBuilder: (BuildContext _, VoidCallback __) {
@@ -170,10 +111,109 @@ class _DecoNewsScreenState extends State<DecoNewsScreen> {
             },
           );
         }
-        return const Center(
-          child: CircularProgressIndicator(),
+        return GridView.builder(
+          //Now let's create our custom List tile
+          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 250,
+            childAspectRatio: 1 / 1.5,
+          ),
+          itemCount: 6,
+          itemBuilder: (context, index) {
+            return Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 4, vertical: 8.0),
+                child: Container(
+                    decoration: decoratedShadowBox(),
+                    child: Column(
+                      // crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                            height: 150,
+                            child:
+                                 Image.asset("images/news.png")),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                      ],
+                    )));
+          },
         );
       },
+    );
+  }
+
+  Column newsColumn(List<WordPressModel> news, int index) {
+    return Column(
+      // crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        imageBox(news, index),
+        const SizedBox(
+          height: 10,
+        ),
+        newsTitle(news, index),
+        const SizedBox(
+          height: 10,
+        ),
+        dateRow(news, index)
+      ],
+    );
+  }
+
+  BoxDecoration decoratedShadowBox() {
+    return BoxDecoration(color: Colors.white,
+        // borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 5,
+            blurRadius: 7,
+            offset: const Offset(5, 5),
+          )
+        ]);
+  }
+
+  SizedBox imageBox(List<WordPressModel> news, int index) {
+    return SizedBox(
+      height: 150,
+      child:  Image.network(
+        news[index].betterFeaturedImage!.sourceUrl!,
+        filterQuality: FilterQuality.low,
+        fit: BoxFit.cover,
+      )
+    );
+  }
+
+  Padding newsTitle(List<WordPressModel> news, int index) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Text(
+        formatHtmlString(news[index].title!.rendered.toString()),
+        style: TextStyle(color: Colors.blueGrey.shade900, fontSize: 15),
+      ),
+    );
+  }
+
+  SizedBox dateRow(List<WordPressModel> news, int index) {
+    return SizedBox(
+      child: Row(
+        children: [
+          const SizedBox(
+            width: 5,
+          ),
+          const Icon(
+            Icons.watch_later,
+            color: Colors.blueGrey,
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Text(news[index].date!.day.toString() +
+              " " +
+              news[index].date!.month.toString() +
+              " " +
+              news[index].date!.year.toString()),
+        ],
+      ),
     );
   }
 
@@ -235,48 +275,42 @@ class _DecoNewsScreenState extends State<DecoNewsScreen> {
       child: ListView(
         // Important: Remove any padding from the ListView.
         padding: EdgeInsets.zero,
-        children: [
-          const DrawerHeader(
+        children: const [
+          DrawerHeader(
             decoration: BoxDecoration(
               image: DecorationImage(
                   image: AssetImage('images/news.png'), fit: BoxFit.cover),
             ),
             child: null,
           ),
-          const SizedBox(
+          SizedBox(
             height: 12,
           ),
           ListTile(
-            onTap: () {
-              setState(() {
-                isSelected = true;
-              });
-            },
-            leading: const Icon(
+            leading: Icon(
               Icons.menu_book,
               color: Color(0xFF7E7D95),
             ),
-            title:
-                const Text('Home', style: TextStyle(color: Color(0xFF7E7D95))),
+            title: Text('Home', style: TextStyle(color: Color(0xFF7E7D95))),
           ),
-          const ListTile(
+          ListTile(
             leading: Icon(Icons.book, color: Color(0xFF7E7D95)),
             title:
                 Text('Categories', style: TextStyle(color: Color(0xFF7E7D95))),
           ),
-          const ListTile(
+          ListTile(
             leading: Icon(Icons.swap_vert, color: Color(0xFF7E7D95)),
             title: Text(
               'Bookmarks',
               style: TextStyle(color: Color(0xFF7E7D95)),
             ),
           ),
-          const ListTile(
+          ListTile(
             leading: Icon(Icons.flag_outlined, color: Color(0xFF7E7D95)),
             title:
                 Text('About App', style: TextStyle(color: Color(0xFF7E7D95))),
           ),
-          const ListTile(
+          ListTile(
             leading: Icon(Icons.settings, color: Color(0xFF7E7D95)),
             title: Text('Settings', style: TextStyle(color: Color(0xFF7E7D95))),
           ),

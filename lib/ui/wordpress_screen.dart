@@ -15,6 +15,17 @@ class WordpressScreen extends StatefulWidget {
 
 class _WordpressScreenState extends State<WordpressScreen> {
   Service client = Service();
+  String formatHtmlString(String string) {
+    return string
+        .replaceAll("<p>", "")
+        .replaceAll("</p>", "")
+        .replaceAll("Dean&#8217;s", "") // Paragraphs
+        .replaceAll("&#8217;s", "")
+        .replaceAll("<p>", "")
+        .replaceAll("[&hellip;]", "")
+        .replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), ' ')
+        .trim(); // Whitespace
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,46 +54,13 @@ class _WordpressScreenState extends State<WordpressScreen> {
                   //Now let's create our custom List tile
                   itemCount: news!.length,
                   itemBuilder: (context, index) {
-                    String formatHtmlString(String string) {
-                      return string
-                          .replaceAll("<p>", "")
-                          .replaceAll("</p>", "")
-                          .replaceAll("Dean&#8217;s", "") // Paragraphs
-                          .replaceAll("&#8217;s", "")
-                          .replaceAll("<p>", "")
-                          .replaceAll("[&hellip;]", "")
-                          .replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), ' ')
-                          .trim(); // Whitespace
-                    }
-
                     return OpenContainer(
                       transitionDuration: const Duration(milliseconds: 600),
                       transitionType: ContainerTransitionType.fadeThrough,
                       closedBuilder:
                           (BuildContext _, VoidCallback openContainer) {
-                        return Card(
-                          color: Colors.white,
-                          shadowColor: Colors.grey.shade200,
-                          child: ListTile(
-                            onTap: openContainer,
-                            leading: SizedBox(
-                              width: 100,
-                              height: 75,
-                              child: Image.network(
-                                news[index].betterFeaturedImage!.sourceUrl!,
-                                filterQuality: FilterQuality.high,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            title: Text(
-                              formatHtmlString(
-                                  news[index].title!.rendered.toString()),
-                              style: TextStyle(
-                                  color: Colors.blueGrey.shade900,
-                                  fontSize: 17),
-                            ),
-                          ),
-                        );
+                        return listTileCard(
+                            openContainer, news, index, formatHtmlString);
                       },
                       openBuilder: (BuildContext _, VoidCallback __) {
                         return DetailScreen(
@@ -96,8 +74,30 @@ class _WordpressScreenState extends State<WordpressScreen> {
                     );
                   });
             }
-            return const Center(
-              child: CircularProgressIndicator(),
+            return Shimmer.fromColors(
+              baseColor: Colors.grey.shade300,
+              highlightColor: Colors.grey.shade100,
+              child: ListView.builder(
+                //Now let's create our custom List tile
+                itemCount: 10,
+                itemBuilder: (context, index) {
+                  return Card(
+                    color: Colors.white,
+                    shadowColor: Colors.grey.shade200,
+                    child: ListTile(
+                      leading: SizedBox(
+                        width: 100,
+                        height: 75,
+                        child: Image.asset(
+                          "images/news.png",
+                          filterQuality: FilterQuality.low,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
             );
           },
         ),
@@ -120,6 +120,39 @@ class _WordpressScreenState extends State<WordpressScreen> {
         ),
       ),
       */
+    );
+  }
+
+  Card listTileCard(VoidCallback openContainer, List<WordPressModel> news,
+      int index, String formatHtmlString(String string)) {
+    return Card(
+      color: Colors.white,
+      shadowColor: Colors.grey.shade200,
+      child: ListTile(
+        onTap: openContainer,
+        leading: imageBox(news, index),
+        title: titleText(formatHtmlString, news, index),
+      ),
+    );
+  }
+
+  SizedBox imageBox(List<WordPressModel> news, int index) {
+    return SizedBox(
+      width: 100,
+      height: 75,
+      child: Image.network(
+        news[index].betterFeaturedImage!.sourceUrl!,
+        filterQuality: FilterQuality.high,
+        fit: BoxFit.cover,
+      ),
+    );
+  }
+
+  Text titleText(String formatHtmlString(String string),
+      List<WordPressModel> news, int index) {
+    return Text(
+      formatHtmlString(news[index].title!.rendered.toString()),
+      style: TextStyle(color: Colors.blueGrey.shade900, fontSize: 17),
     );
   }
 }
