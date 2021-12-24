@@ -1,7 +1,9 @@
+import 'package:animations/animations.dart';
 import 'package:blog_app/ui/wordpress_screen.dart';
 import 'package:flutter/material.dart';
 import '../models/wordpress_model.dart';
 import '../service/api_service.dart';
+import 'detail_news.dart';
 
 class DecoNewsScreen extends StatefulWidget {
   const DecoNewsScreen({Key? key}) : super(key: key);
@@ -13,6 +15,8 @@ class DecoNewsScreen extends StatefulWidget {
 class _DecoNewsScreenState extends State<DecoNewsScreen> {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
   Service client = Service();
+
+  bool isSelected = false;
 
   String formatHtmlString(String string) {
     return string
@@ -30,21 +34,39 @@ class _DecoNewsScreenState extends State<DecoNewsScreen> {
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 7,
-      child: Scaffold(
-          key: _key,
-          drawer: drawerMenu(),
-          appBar: bottomAppBar(),
-          body: TabBarView(
-            children: [
-              homeTab(),
-              const WordpressScreen(),
-              const Center(child: Text("Tab 3")),
-              const Center(child: Text("Tab 4")),
-              const Center(child: Text("Tab 5")),
-              const Center(child: Text("Tab 6")),
-              const Center(child: Text("Tab 7")),
-            ],
-          )),
+      child: SafeArea(
+        child: Scaffold(
+            key: _key,
+            drawer: Theme(
+                data: Theme.of(context)
+                    .copyWith(canvasColor: const Color(0xFF1B1D29)),
+                child: drawerMenu()),
+            appBar: bottomAppBar(),
+            body: PageTransitionSwitcher(
+              transitionBuilder: (
+                Widget child,
+                Animation<double> animation,
+                Animation<double> secondaryAnimation,
+              ) {
+                return FadeThroughTransition(
+                  animation: animation,
+                  secondaryAnimation: secondaryAnimation,
+                  child: child,
+                );
+              },
+              child: TabBarView(
+                children: [
+                  homeTab(),
+                  const WordpressScreen(),
+                  const Center(child: Text("Tab 3")),
+                  const Center(child: Text("Tab 4")),
+                  const Center(child: Text("Tab 5")),
+                  const Center(child: Text("Tab 6")),
+                  const Center(child: Text("Tab 7")),
+                ],
+              ),
+            )),
+      ),
     );
   }
 
@@ -61,77 +83,88 @@ class _DecoNewsScreenState extends State<DecoNewsScreen> {
             //Now let's create our custom List tile
             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: 250,
-              childAspectRatio: 1 / 1.6,
+              childAspectRatio: 1 / 1.5,
             ),
             itemCount: news!.length,
             itemBuilder: (context, index) {
               return Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 4, vertical: 8.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 5,
-                          blurRadius: 7,
-                          offset: const Offset(0, 3),
-                        )
-                      ]),
-                  child: Column(
-                    // crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        height: 150,
-                        child: Image.network(
-                          news[index].betterFeaturedImage!.sourceUrl!,
-                          filterQuality: FilterQuality.high,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Text(
-                          formatHtmlString(
-                              news[index].title!.rendered.toString()),
-                          style: TextStyle(
-                              color: Colors.blueGrey.shade900, fontSize: 15),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: SizedBox(
-                          child: Row(
-                            children: [
-                              const SizedBox(
-                                width: 5,
-                              ),
-                              const Icon(
-                                Icons.watch_later,
-                                color: Colors.blueGrey,
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Text(news[index].date!.day.toString() +
-                                  " " +
-                                  news[index].date!.month.toString() +
-                                  " " +
-                                  news[index].date!.year.toString()),
-                            ],
+                child: OpenContainer(
+                  transitionType: ContainerTransitionType.fade,
+                  closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                    return Container(
+                      decoration: BoxDecoration(color: Colors.white,
+                          // borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 5,
+                              blurRadius: 7,
+                              offset: const Offset(5, 5),
+                            )
+                          ]),
+                      child: Column(
+                        // crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: 150,
+                            child: Image.network(
+                              news[index].betterFeaturedImage!.sourceUrl!,
+                              filterQuality: FilterQuality.low,
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                        ),
-                      )
-                    ],
-                  ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: Text(
+                              formatHtmlString(
+                                  news[index].title!.rendered.toString()),
+                              style: TextStyle(
+                                  color: Colors.blueGrey.shade900,
+                                  fontSize: 15),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          SizedBox(
+                            child: Row(
+                              children: [
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                const Icon(
+                                  Icons.watch_later,
+                                  color: Colors.blueGrey,
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Text(news[index].date!.day.toString() +
+                                    " " +
+                                    news[index].date!.month.toString() +
+                                    " " +
+                                    news[index].date!.year.toString()),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    );
+                  },
+                  openBuilder: (BuildContext _, VoidCallback __) {
+                    return DetailScreen(
+                        day: news[index].date!.day.toString(),
+                        month: news[index].date!.month.toString(),
+                        year: news[index].date!.year.toString(),
+                        title: news[index].title!.rendered.toString(),
+                        content: news[index].content!.rendered.toString(),
+                        url: news[index].betterFeaturedImage!.sourceUrl!);
+                  },
                 ),
               );
             },
@@ -205,23 +238,47 @@ class _DecoNewsScreenState extends State<DecoNewsScreen> {
         children: [
           const DrawerHeader(
             decoration: BoxDecoration(
-              color: Colors.blue,
+              image: DecorationImage(
+                  image: AssetImage('images/news.png'), fit: BoxFit.cover),
             ),
-            child: Text('Drawer Header'),
+            child: null,
+          ),
+          const SizedBox(
+            height: 12,
           ),
           ListTile(
-            title: const Text('Item 1'),
             onTap: () {
-              // Update the state of the app.
-              // ...
+              setState(() {
+                isSelected = true;
+              });
             },
+            leading: const Icon(
+              Icons.menu_book,
+              color: Color(0xFF7E7D95),
+            ),
+            title:
+                const Text('Home', style: TextStyle(color: Color(0xFF7E7D95))),
           ),
-          ListTile(
-            title: const Text('Item 2'),
-            onTap: () {
-              // Update the state of the app.
-              // ...
-            },
+          const ListTile(
+            leading: Icon(Icons.book, color: Color(0xFF7E7D95)),
+            title:
+                Text('Categories', style: TextStyle(color: Color(0xFF7E7D95))),
+          ),
+          const ListTile(
+            leading: Icon(Icons.swap_vert, color: Color(0xFF7E7D95)),
+            title: Text(
+              'Bookmarks',
+              style: TextStyle(color: Color(0xFF7E7D95)),
+            ),
+          ),
+          const ListTile(
+            leading: Icon(Icons.flag_outlined, color: Color(0xFF7E7D95)),
+            title:
+                Text('About App', style: TextStyle(color: Color(0xFF7E7D95))),
+          ),
+          const ListTile(
+            leading: Icon(Icons.settings, color: Color(0xFF7E7D95)),
+            title: Text('Settings', style: TextStyle(color: Color(0xFF7E7D95))),
           ),
         ],
       ),

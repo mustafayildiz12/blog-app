@@ -2,12 +2,21 @@ import 'package:flutter/material.dart';
 
 class DetailScreen extends StatelessWidget {
   DetailScreen(
-      {Key? key, required this.title, required this.content, required this.url})
+      {Key? key,
+      required this.title,
+      required this.content,
+      required this.url,
+      required this.day,
+      required this.month,
+      required this.year})
       : super(key: key);
 
   String? url;
   String? title;
   String? content;
+  String? day;
+  String? month;
+  String? year;
 
   @override
   Widget build(BuildContext context) {
@@ -23,44 +32,78 @@ class DetailScreen extends StatelessWidget {
           .trim(); // Whitespace
     }
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFccac00),
-      appBar: AppBar(
-        title: const Text("HABERİN DETAYLARI"),
-        centerTitle: true,
-        backgroundColor: const Color(0xFF998100),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 12,
-            ),
-            Text(
-              formatHtmlString(title!),
-              style: TextStyle(
-                  color: Colors.blueGrey.shade900,
-                  fontSize: 23,
-                  fontWeight: FontWeight.w700),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(
-              height: 12,
-            ),
-            Image.network(url!),
-            Container(
-              padding: const EdgeInsets.all(8),
-              // margin: const EdgeInsets.all(8),
-              decoration: const BoxDecoration(
-                color: Color(0xFFe5c100),
+    return SafeArea(
+      child: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) {
+          return [
+            SliverAppBar(
+              centerTitle: true,
+              expandedHeight: MediaQuery.of(context).size.height * 0.35,
+              pinned: false,
+              stretch: false,
+              flexibleSpace: FlexibleSpaceBar(
+                stretchModes: const [StretchMode.fadeTitle],
+                background: Image.network(url!, fit: BoxFit.cover),
               ),
-              child: Text(formatHtmlString(content!),
-                  style: TextStyle(
-                      color: Colors.blueGrey.shade900,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400)),
-            )
-          ],
+            ),
+          ];
+        },
+        body: Scaffold(
+          backgroundColor: Colors.white70,
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(color: Colors.white, boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: const Offset(0, 3),
+                  )
+                ]),
+                child: Column(
+                  children: [
+                    Text(
+                      formatHtmlString(title!),
+                      style: TextStyle(
+                          color: Colors.blueGrey.shade900,
+                          fontSize: 21,
+                          fontWeight: FontWeight.w600),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    Row(
+                      children: [
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        const Icon(
+                          Icons.watch_later,
+                          color: Colors.blueGrey,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(day! + " " + month! + " " + year!),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    Text(formatHtmlString(content!),
+                        style: TextStyle(
+                            color: Colors.blueGrey.shade900,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400)),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );

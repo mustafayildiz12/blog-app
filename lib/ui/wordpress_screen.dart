@@ -61,8 +61,8 @@ class _WordpressScreenState extends State<WordpressScreen> {
                       closedBuilder:
                           (BuildContext _, VoidCallback openContainer) {
                         return Card(
-                          color: const Color(0xFFccac00),
-                          shadowColor: Colors.grey,
+                          color: Colors.white,
+                          shadowColor: Colors.grey.shade200,
                           child: ListTile(
                             onTap: openContainer,
                             leading: SizedBox(
@@ -86,6 +86,9 @@ class _WordpressScreenState extends State<WordpressScreen> {
                       },
                       openBuilder: (BuildContext _, VoidCallback __) {
                         return DetailScreen(
+                            day: news[index].date!.day.toString(),
+                            month: news[index].date!.month.toString(),
+                            year: news[index].date!.year.toString(),
                             title: news[index].title!.rendered.toString(),
                             content: news[index].content!.rendered.toString(),
                             url: news[index].betterFeaturedImage!.sourceUrl!);
