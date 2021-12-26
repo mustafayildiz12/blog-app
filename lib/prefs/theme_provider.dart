@@ -27,7 +27,7 @@ class MyThemes {
       iconTheme: const IconThemeData(color: Colors.white, opacity: 0.8),
       indicatorColor: Colors.white,
       primaryColorDark: Colors.white,
-      shadowColor: Colors.grey.shade900,
+      shadowColor: Colors.white,
       splashColor: Colors.white70,
       cardColor: const Color(0xFF1B1D29));
 

@@ -45,6 +45,7 @@ class _DecoNewsScreenState extends State<DecoNewsScreen> {
       length: 7,
       child: SafeArea(
         child: Scaffold(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             key: _scaffoldKey,
             drawer: Theme(
                 data: Theme.of(context)
@@ -118,19 +119,19 @@ class _DecoNewsScreenState extends State<DecoNewsScreen> {
   AppBar bottomAppBar() {
     return AppBar(
       leading: IconButton(
-        icon: const Icon(
+        icon: Icon(
           Icons.menu,
-          color: Colors.blueGrey,
+          color: Theme.of(context).primaryColorDark,
         ),
         onPressed: () {
           _scaffoldKey.currentState!.openDrawer();
         },
       ),
-      title: const Text(
+      title: Text(
         "DECO NEWS",
-        style: TextStyle(color: Colors.black),
+        style: TextStyle(color: Theme.of(context).primaryColorDark),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).cardColor,
       centerTitle: true,
       bottom: tabbars(),
     );
@@ -139,7 +140,7 @@ class _DecoNewsScreenState extends State<DecoNewsScreen> {
   TabBar tabbars() {
     return TabBar(
       indicatorColor: Theme.of(context).indicatorColor,
-      labelColor: Colors.grey.shade800,
+      labelColor: Theme.of(context).indicatorColor,
       unselectedLabelColor: Colors.grey.shade400,
       isScrollable: true,
       tabs: const [

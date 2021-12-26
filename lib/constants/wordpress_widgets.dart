@@ -4,12 +4,14 @@ import 'package:blog_app/models/wordpress_model.dart';
 import 'package:blog_app/ui/detail_news.dart';
 import 'package:flutter/material.dart';
 
-OpenContainer<Object?> openContainer(List<WordPressModel> news, int index) {
+OpenContainer<Object?> openContainer(
+    List<WordPressModel> news, int index, BuildContext context) {
   return OpenContainer(
     transitionDuration: const Duration(milliseconds: 600),
     transitionType: ContainerTransitionType.fadeThrough,
     closedBuilder: (BuildContext _, VoidCallback openContainer) {
-      return listTileCard(openContainer, news, index, formatHtmlString);
+      return listTileCard(
+          openContainer, news, index, formatHtmlString, context);
     },
     openBuilder: (BuildContext _, VoidCallback __) {
       return DetailScreen(
@@ -23,15 +25,21 @@ OpenContainer<Object?> openContainer(List<WordPressModel> news, int index) {
   );
 }
 
-Card listTileCard(VoidCallback openContainer, List<WordPressModel> news,
-    int index, String Function(String string) formatHtmlString) {
+Card listTileCard(
+    VoidCallback openContainer,
+    List<WordPressModel> news,
+    int index,
+    String Function(String string) formatHtmlString,
+    BuildContext context) {
   return Card(
-    color: Colors.white,
-    shadowColor: Colors.grey.shade200,
+    color: Theme.of(context).cardColor,
+    shadowColor: Colors.black,
     child: ListTile(
+      tileColor: Theme.of(context).cardColor,
+      focusColor: Theme.of(context).cardColor,
       onTap: openContainer,
       leading: imageBox(news, index),
-      title: titleText(formatHtmlString, news, index),
+      title: titleText(formatHtmlString, news, index, context),
     ),
   );
 }
@@ -49,9 +57,9 @@ SizedBox imageBox(List<WordPressModel> news, int index) {
 }
 
 Text titleText(String Function(String string) formatHtmlString,
-    List<WordPressModel> news, int index) {
+    List<WordPressModel> news, int index, BuildContext context) {
   return Text(
     formatHtmlString(news[index].title!.rendered.toString()),
-    style: TextStyle(color: Colors.blueGrey.shade900, fontSize: 17),
+    style: TextStyle(color: Theme.of(context).primaryColorDark, fontSize: 17),
   );
 }

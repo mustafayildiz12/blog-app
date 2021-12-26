@@ -18,6 +18,7 @@ class _WordpressScreenState extends State<WordpressScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: PageTransitionSwitcher(
         transitionBuilder: (
           Widget child,
@@ -42,7 +43,10 @@ class _WordpressScreenState extends State<WordpressScreen> {
                   //Now let's create our custom List tile
                   itemCount: news!.length,
                   itemBuilder: (context, index) {
-                    return openContainer(news, index);
+                    return Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: openContainer(news, index, context),
+                    );
                   });
             }
             return const ListShimmmer();
