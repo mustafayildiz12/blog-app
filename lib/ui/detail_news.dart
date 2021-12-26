@@ -1,3 +1,4 @@
+import 'package:blog_app/constants/string_constant.dart';
 import 'package:flutter/material.dart';
 
 class DetailScreen extends StatelessWidget {
@@ -20,18 +21,6 @@ class DetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String formatHtmlString(String string) {
-      return string
-          .replaceAll("<p>", "")
-          .replaceAll("</p>", "")
-          .replaceAll("Dean&#8217;s", "") // Paragraphs
-          .replaceAll("&#8217;s", "")
-          .replaceAll("<p>", "")
-          .replaceAll("[&hellip;]", "")
-          .replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), ' ')
-          .trim(); // Whitespace
-    }
-
     return SafeArea(
       child: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) {

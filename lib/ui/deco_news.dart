@@ -1,9 +1,14 @@
+import 'dart:async';
+import 'dart:math';
 import 'package:animations/animations.dart';
+import 'package:blog_app/constants/deco_news_widgets.dart';
+import 'package:blog_app/constants/drawer_list.dart';
+import 'package:blog_app/constants/grid_shimmer.dart';
 import 'package:blog_app/ui/wordpress_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import '../models/wordpress_model.dart';
 import '../service/api_service.dart';
-import 'detail_news.dart';
 
 class DecoNewsScreen extends StatefulWidget {
   const DecoNewsScreen({Key? key}) : super(key: key);
@@ -13,19 +18,25 @@ class DecoNewsScreen extends StatefulWidget {
 }
 
 class _DecoNewsScreenState extends State<DecoNewsScreen> {
-  final GlobalKey<ScaffoldState> _key = GlobalKey();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<LiquidPullToRefreshState> _refreshIndicatorKey =
+      GlobalKey<LiquidPullToRefreshState>();
+
   Service client = Service();
 
-  String formatHtmlString(String string) {
-    return string
-        .replaceAll("<p>", "")
-        .replaceAll("</p>", "")
-        .replaceAll("Dean&#8217;s", "") // Paragraphs
-        .replaceAll("&#8217;s", "")
-        .replaceAll("<p>", "")
-        .replaceAll("[&hellip;]", "")
-        .replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), ' ')
-        .trim(); // Whitespace
+  static int refreshNum = 10; // number that changes when refreshed
+  Stream<int> counterStream =
+      Stream<int>.periodic(const Duration(seconds: 3), (x) => refreshNum);
+
+  Future<void> _handleRefresh() {
+    final Completer<void> completer = Completer<void>();
+    Timer(const Duration(milliseconds: 700), () {
+      completer.complete();
+    });
+    setState(() {
+      refreshNum = Random().nextInt(100);
+    });
+    return completer.future;
   }
 
   @override
@@ -34,34 +45,39 @@ class _DecoNewsScreenState extends State<DecoNewsScreen> {
       length: 7,
       child: SafeArea(
         child: Scaffold(
-            key: _key,
+            key: _scaffoldKey,
             drawer: Theme(
                 data: Theme.of(context)
                     .copyWith(canvasColor: const Color(0xFF1B1D29)),
-                child: drawerMenu()),
+                child: const DrawerHeaderMenu()),
             appBar: bottomAppBar(),
-            body: PageTransitionSwitcher(
-              transitionBuilder: (
-                Widget child,
-                Animation<double> animation,
-                Animation<double> secondaryAnimation,
-              ) {
-                return FadeThroughTransition(
-                  animation: animation,
-                  secondaryAnimation: secondaryAnimation,
-                  child: child,
-                );
-              },
-              child: TabBarView(
-                children: [
-                  homeTab(),
-                  const WordpressScreen(),
-                  const Center(child: Text("Tab 3")),
-                  const Center(child: Text("Tab 4")),
-                  const Center(child: Text("Tab 5")),
-                  const Center(child: Text("Tab 6")),
-                  const Center(child: Text("Tab 7")),
-                ],
+            body: LiquidPullToRefresh(
+              key: _refreshIndicatorKey,
+              onRefresh: _handleRefresh,
+              showChildOpacityTransition: false,
+              child: PageTransitionSwitcher(
+                transitionBuilder: (
+                  Widget child,
+                  Animation<double> animation,
+                  Animation<double> secondaryAnimation,
+                ) {
+                  return FadeThroughTransition(
+                    animation: animation,
+                    secondaryAnimation: secondaryAnimation,
+                    child: child,
+                  );
+                },
+                child: TabBarView(
+                  children: [
+                    homeTab(),
+                    const WordpressScreen(),
+                    const Center(child: Text("Tab 3")),
+                    const Center(child: Text("Tab 4")),
+                    const Center(child: Text("Tab 5")),
+                    const Center(child: Text("Tab 6")),
+                    const Center(child: Text("Tab 7")),
+                  ],
+                ),
               ),
             )),
       ),
@@ -89,131 +105,13 @@ class _DecoNewsScreenState extends State<DecoNewsScreen> {
               return Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 4, vertical: 8.0),
-                child: OpenContainer(
-                  transitionType: ContainerTransitionType.fade,
-                  closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                    return Container(
-                      decoration: decoratedShadowBox(),
-                      child: newsColumn(news, index),
-                    );
-                  },
-                  openBuilder: (BuildContext _, VoidCallback __) {
-                    return DetailScreen(
-                        day: news[index].date!.day.toString(),
-                        month: news[index].date!.month.toString(),
-                        year: news[index].date!.year.toString(),
-                        title: news[index].title!.rendered.toString(),
-                        content: news[index].content!.rendered.toString(),
-                        url: news[index].betterFeaturedImage!.sourceUrl!);
-                  },
-                ),
+                child: animatedContainer(news, index, context),
               );
             },
           );
         }
-        return GridView.builder(
-          //Now let's create our custom List tile
-          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 250,
-            childAspectRatio: 1 / 1.5,
-          ),
-          itemCount: 6,
-          itemBuilder: (context, index) {
-            return Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 4, vertical: 8.0),
-                child: Container(
-                    decoration: decoratedShadowBox(),
-                    child: Column(
-                      // crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                            height: 150,
-                            child:
-                                 Image.asset("images/news.png")),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                      ],
-                    )));
-          },
-        );
+        return const GridShimmer();
       },
-    );
-  }
-
-  Column newsColumn(List<WordPressModel> news, int index) {
-    return Column(
-      // crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        imageBox(news, index),
-        const SizedBox(
-          height: 10,
-        ),
-        newsTitle(news, index),
-        const SizedBox(
-          height: 10,
-        ),
-        dateRow(news, index)
-      ],
-    );
-  }
-
-  BoxDecoration decoratedShadowBox() {
-    return BoxDecoration(color: Colors.white,
-        // borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 5,
-            blurRadius: 7,
-            offset: const Offset(5, 5),
-          )
-        ]);
-  }
-
-  SizedBox imageBox(List<WordPressModel> news, int index) {
-    return SizedBox(
-      height: 150,
-      child:  Image.network(
-        news[index].betterFeaturedImage!.sourceUrl!,
-        filterQuality: FilterQuality.low,
-        fit: BoxFit.cover,
-      )
-    );
-  }
-
-  Padding newsTitle(List<WordPressModel> news, int index) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: Text(
-        formatHtmlString(news[index].title!.rendered.toString()),
-        style: TextStyle(color: Colors.blueGrey.shade900, fontSize: 15),
-      ),
-    );
-  }
-
-  SizedBox dateRow(List<WordPressModel> news, int index) {
-    return SizedBox(
-      child: Row(
-        children: [
-          const SizedBox(
-            width: 5,
-          ),
-          const Icon(
-            Icons.watch_later,
-            color: Colors.blueGrey,
-          ),
-          const SizedBox(
-            width: 10,
-          ),
-          Text(news[index].date!.day.toString() +
-              " " +
-              news[index].date!.month.toString() +
-              " " +
-              news[index].date!.year.toString()),
-        ],
-      ),
     );
   }
 
@@ -225,7 +123,7 @@ class _DecoNewsScreenState extends State<DecoNewsScreen> {
           color: Colors.blueGrey,
         ),
         onPressed: () {
-          _key.currentState!.openDrawer();
+          _scaffoldKey.currentState!.openDrawer();
         },
       ),
       title: const Text(
@@ -240,7 +138,7 @@ class _DecoNewsScreenState extends State<DecoNewsScreen> {
 
   TabBar tabbars() {
     return TabBar(
-      indicatorColor: Colors.black,
+      indicatorColor: Theme.of(context).indicatorColor,
       labelColor: Colors.grey.shade800,
       unselectedLabelColor: Colors.grey.shade400,
       isScrollable: true,
@@ -267,55 +165,6 @@ class _DecoNewsScreenState extends State<DecoNewsScreen> {
           text: "World",
         ),
       ],
-    );
-  }
-
-  Drawer drawerMenu() {
-    return Drawer(
-      child: ListView(
-        // Important: Remove any padding from the ListView.
-        padding: EdgeInsets.zero,
-        children: const [
-          DrawerHeader(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage('images/news.png'), fit: BoxFit.cover),
-            ),
-            child: null,
-          ),
-          SizedBox(
-            height: 12,
-          ),
-          ListTile(
-            leading: Icon(
-              Icons.menu_book,
-              color: Color(0xFF7E7D95),
-            ),
-            title: Text('Home', style: TextStyle(color: Color(0xFF7E7D95))),
-          ),
-          ListTile(
-            leading: Icon(Icons.book, color: Color(0xFF7E7D95)),
-            title:
-                Text('Categories', style: TextStyle(color: Color(0xFF7E7D95))),
-          ),
-          ListTile(
-            leading: Icon(Icons.swap_vert, color: Color(0xFF7E7D95)),
-            title: Text(
-              'Bookmarks',
-              style: TextStyle(color: Color(0xFF7E7D95)),
-            ),
-          ),
-          ListTile(
-            leading: Icon(Icons.flag_outlined, color: Color(0xFF7E7D95)),
-            title:
-                Text('About App', style: TextStyle(color: Color(0xFF7E7D95))),
-          ),
-          ListTile(
-            leading: Icon(Icons.settings, color: Color(0xFF7E7D95)),
-            title: Text('Settings', style: TextStyle(color: Color(0xFF7E7D95))),
-          ),
-        ],
-      ),
     );
   }
 }
