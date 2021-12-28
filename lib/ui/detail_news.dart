@@ -38,13 +38,13 @@ class DetailScreen extends StatelessWidget {
           ];
         },
         body: Scaffold(
-          backgroundColor: Colors.white70,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           body: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Container(
                 padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(color: Colors.white, boxShadow: [
+                decoration: BoxDecoration(color:  Theme.of(context).cardColor, boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withOpacity(0.5),
                     spreadRadius: 5,
@@ -57,7 +57,7 @@ class DetailScreen extends StatelessWidget {
                     Text(
                       formatHtmlString(title!),
                       style: TextStyle(
-                          color: Colors.blueGrey.shade900,
+                          color: Theme.of(context).primaryColorDark,
                           fontSize: 21,
                           fontWeight: FontWeight.w600),
                       textAlign: TextAlign.center,
@@ -72,7 +72,6 @@ class DetailScreen extends StatelessWidget {
                         ),
                         const Icon(
                           Icons.watch_later,
-                          color: Colors.blueGrey,
                         ),
                         const SizedBox(
                           width: 10,
@@ -85,7 +84,7 @@ class DetailScreen extends StatelessWidget {
                     ),
                     Text(formatHtmlString(content!),
                         style: TextStyle(
-                            color: Colors.blueGrey.shade900,
+                            color: Theme.of(context).primaryColorDark,
                             fontSize: 16,
                             fontWeight: FontWeight.w400)),
                   ],

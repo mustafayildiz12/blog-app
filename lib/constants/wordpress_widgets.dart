@@ -25,15 +25,14 @@ OpenContainer<Object?> openContainer(
   );
 }
 
-Card listTileCard(
+Container listTileCard(
     VoidCallback openContainer,
     List<WordPressModel> news,
     int index,
     String Function(String string) formatHtmlString,
     BuildContext context) {
-  return Card(
+  return Container(
     color: Theme.of(context).cardColor,
-    shadowColor: Colors.black,
     child: ListTile(
       tileColor: Theme.of(context).cardColor,
       focusColor: Theme.of(context).cardColor,

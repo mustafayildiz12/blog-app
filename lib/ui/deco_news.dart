@@ -57,29 +57,29 @@ class _DecoNewsScreenState extends State<DecoNewsScreen> {
               onRefresh: _handleRefresh,
               showChildOpacityTransition: false,
               child: PageTransitionSwitcher(
-                transitionBuilder: (
-                  Widget child,
-                  Animation<double> animation,
-                  Animation<double> secondaryAnimation,
-                ) {
-                  return FadeThroughTransition(
-                    animation: animation,
-                    secondaryAnimation: secondaryAnimation,
-                    child: child,
-                  );
-                },
-                child: TabBarView(
-                  children: [
-                    homeTab(),
-                    const WordpressScreen(),
-                    const Center(child: Text("Tab 3")),
-                    const Center(child: Text("Tab 4")),
-                    const Center(child: Text("Tab 5")),
-                    const Center(child: Text("Tab 6")),
-                    const Center(child: Text("Tab 7")),
-                  ],
+                  transitionBuilder: (
+                    Widget child,
+                    Animation<double> animation,
+                    Animation<double> secondaryAnimation,
+                  ) {
+                    return FadeThroughTransition(
+                      animation: animation,
+                      secondaryAnimation: secondaryAnimation,
+                      child: child,
+                    );
+                  },
+                  child: TabBarView(
+                    children: [
+                      homeTab(),
+                      const WordpressScreen(),
+                      const Center(child: Text("Tab 3")),
+                      const Center(child: Text("Tab 4")),
+                      const Center(child: Text("Tab 5")),
+                      const Center(child: Text("Tab 6")),
+                      const Center(child: Text("Tab 7")),
+                    ],
+                  ),
                 ),
-              ),
             )),
       ),
     );
@@ -96,6 +96,7 @@ class _DecoNewsScreenState extends State<DecoNewsScreen> {
           //Now let's make a list of articles
           List<WordPressModel>? news = snapshot.data;
           return GridView.builder(
+            shrinkWrap: true,
             //Now let's create our custom List tile
             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: 250,
