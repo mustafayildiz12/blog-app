@@ -72,10 +72,10 @@ class _DecoNewsScreenState extends State<DecoNewsScreen> {
                 },
                 child: TabBarView(
                   children: [
-                    homeTab(),
                     const MyNews(),
-                    const Categories(),
-                    const WordpressScreen(),
+                    const MyNews(),
+                    const Center(child: Text("Tab 3")),
+                    const Center(child: Text("Tab 4")),
                     const Center(child: Text("Tab 5")),
                     const Center(child: Text("Tab 6")),
                     const Center(child: Text("Tab 7")),

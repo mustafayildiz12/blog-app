@@ -47,6 +47,7 @@ class _MyNewsState extends State<MyNews> {
                 return GridView.builder(
                     //Now let's create our custom List tile
                     shrinkWrap: true,
+                    itemCount: 20,
                     //Now let's create our custom List tile
                     gridDelegate:
                         const SliverGridDelegateWithMaxCrossAxisExtent(
@@ -66,7 +67,8 @@ class _MyNewsState extends State<MyNews> {
                               child: Container(
                                 decoration: BoxDecoration(
                                     color: Theme.of(context).cardColor,
-                                    borderRadius: BorderRadius.circular(10),
+                                    //  borderRadius: BorderRadius.circular(10),
+
                                     boxShadow: [
                                       BoxShadow(
                                         color: Colors.grey.withOpacity(0.5),
