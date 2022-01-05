@@ -1,5 +1,6 @@
 import 'package:blog_app/prefs/theme_provider.dart';
 import 'package:blog_app/ui/deco_news.dart';
+import 'package:blog_app/ui/my_news.dart';
 import 'package:blog_app/ui/on_boarding.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
             themeMode: themeProvider.themeMode,
             theme: MyThemes.lightTheme,
             darkTheme: MyThemes.darkTheme,
-            home: const Splash(),
+            home: const MyNews(),
           );
         });
   }

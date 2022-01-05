@@ -4,11 +4,13 @@ import 'package:animations/animations.dart';
 import 'package:blog_app/constants/deco_news_widgets.dart';
 import 'package:blog_app/constants/drawer_list.dart';
 import 'package:blog_app/constants/grid_shimmer.dart';
+import 'package:blog_app/ui/my_news.dart';
 import 'package:blog_app/ui/wordpress_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import '../models/wordpress_model.dart';
 import '../service/api_service.dart';
+import 'categories.dart';
 
 class DecoNewsScreen extends StatefulWidget {
   const DecoNewsScreen({Key? key}) : super(key: key);
@@ -57,29 +59,29 @@ class _DecoNewsScreenState extends State<DecoNewsScreen> {
               onRefresh: _handleRefresh,
               showChildOpacityTransition: false,
               child: PageTransitionSwitcher(
-                  transitionBuilder: (
-                    Widget child,
-                    Animation<double> animation,
-                    Animation<double> secondaryAnimation,
-                  ) {
-                    return FadeThroughTransition(
-                      animation: animation,
-                      secondaryAnimation: secondaryAnimation,
-                      child: child,
-                    );
-                  },
-                  child: TabBarView(
-                    children: [
-                      homeTab(),
-                      const WordpressScreen(),
-                      const Center(child: Text("Tab 3")),
-                      const Center(child: Text("Tab 4")),
-                      const Center(child: Text("Tab 5")),
-                      const Center(child: Text("Tab 6")),
-                      const Center(child: Text("Tab 7")),
-                    ],
-                  ),
+                transitionBuilder: (
+                  Widget child,
+                  Animation<double> animation,
+                  Animation<double> secondaryAnimation,
+                ) {
+                  return FadeThroughTransition(
+                    animation: animation,
+                    secondaryAnimation: secondaryAnimation,
+                    child: child,
+                  );
+                },
+                child: TabBarView(
+                  children: [
+                    homeTab(),
+                    const MyNews(),
+                    const Categories(),
+                    const WordpressScreen(),
+                    const Center(child: Text("Tab 5")),
+                    const Center(child: Text("Tab 6")),
+                    const Center(child: Text("Tab 7")),
+                  ],
                 ),
+              ),
             )),
       ),
     );
