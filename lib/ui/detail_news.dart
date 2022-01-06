@@ -9,6 +9,7 @@ class DetailScreen extends StatelessWidget {
       required this.url,
       required this.day,
       required this.month,
+      required this.source,
       required this.year})
       : super(key: key);
 
@@ -18,6 +19,7 @@ class DetailScreen extends StatelessWidget {
   String? day;
   String? month;
   String? year;
+  String? source;
 
   @override
   Widget build(BuildContext context) {
@@ -44,14 +46,16 @@ class DetailScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Container(
                 padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(color:  Theme.of(context).cardColor, boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: const Offset(0, 3),
-                  )
-                ]),
+                decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 5,
+                        blurRadius: 7,
+                        offset: const Offset(0, 3),
+                      )
+                    ]),
                 child: Column(
                   children: [
                     Text(
@@ -77,6 +81,12 @@ class DetailScreen extends StatelessWidget {
                           width: 10,
                         ),
                         Text(day! + " " + month! + " " + year!),
+                        Spacer(),
+                        Text(
+                          source!,
+                          style: TextStyle(
+                              color: Colors.red, fontWeight: FontWeight.bold),
+                        )
                       ],
                     ),
                     const SizedBox(

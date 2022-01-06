@@ -18,6 +18,7 @@ OpenContainer<Object?> animatedContainer(
     },
     openBuilder: (BuildContext _, VoidCallback __) {
       return DetailScreen(
+          source: news[index].slug.toString(),
           day: news[index].date!.day.toString(),
           month: news[index].date!.month.toString(),
           year: news[index].date!.year.toString(),
@@ -37,7 +38,6 @@ SizedBox dateRow(List<WordPressModel> news, int index) {
         ),
         const Icon(
           Icons.watch_later,
-
         ),
         const SizedBox(
           width: 15,

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:animations/animations.dart';
 import 'package:blog_app/constants/grid_shimmer.dart';
 import 'package:blog_app/models/news.dart';
@@ -44,20 +46,13 @@ class _MyNewsState extends State<MyNews> {
               if (snapshot.hasData) {
                 //Now let's make a list of articles
                 List<Article>? news = snapshot.data;
-                return GridView.builder(
-                    //Now let's create our custom List tile
+                return ListView.builder(
                     shrinkWrap: true,
                     itemCount: 20,
-                    //Now let's create our custom List tile
-                    gridDelegate:
-                        const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 250,
-                      childAspectRatio: 1 / 1.5,
-                    ),
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 20),
+                            horizontal: 5, vertical: 20),
                         child: OpenContainer(
                           transitionType: ContainerTransitionType.fade,
                           closedBuilder:
@@ -81,13 +76,35 @@ class _MyNewsState extends State<MyNews> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    SizedBox(
-                                      height: 150,
-                                      child: Image.network(
-                                        news![index].urlToImage.toString(),
-                                        filterQuality: FilterQuality.low,
-                                        fit: BoxFit.cover,
-                                      ),
+                                    Stack(
+                                      children: [
+                                        SizedBox(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          child: ColorFiltered(
+                                            colorFilter: const ColorFilter.mode(
+                                                Colors.black,
+                                                BlendMode.saturation),
+                                            child: Image.network(
+                                              news![index]
+                                                  .urlToImage
+                                                  .toString(),
+                                              filterQuality: FilterQuality.low,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          right: 5,
+                                          top: 5,
+                                          child: Text(
+                                            news[index].author.toString(),
+                                            style: const TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                     const SizedBox(
                                       height: 10,
@@ -96,6 +113,9 @@ class _MyNewsState extends State<MyNews> {
                                       news[index].title.toString(),
                                       textAlign: TextAlign.center,
                                     ),
+                                    const SizedBox(
+                                      height: 45,
+                                    ),
                                   ],
                                 ),
                               ),
@@ -103,7 +123,8 @@ class _MyNewsState extends State<MyNews> {
                           },
                           openBuilder: (BuildContext _, VoidCallback __) {
                             return DetailScreen(
-                                day: news![index].publishedAt!.day.toString(),
+                                source: news![index].source!.name.toString(),
+                                day: news[index].publishedAt!.day.toString(),
                                 month:
                                     news[index].publishedAt!.month.toString(),
                                 year: news[index].publishedAt!.year.toString(),

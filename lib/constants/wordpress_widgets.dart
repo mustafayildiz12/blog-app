@@ -15,6 +15,7 @@ OpenContainer<Object?> openContainer(
     },
     openBuilder: (BuildContext _, VoidCallback __) {
       return DetailScreen(
+          source: news[index].slug.toString(),
           day: news[index].date!.day.toString(),
           month: news[index].date!.month.toString(),
           year: news[index].date!.year.toString(),
